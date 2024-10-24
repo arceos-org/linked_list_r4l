@@ -266,7 +266,7 @@ impl<G: GetLinks> RawList<G> {
     }
 
     /// Returns a mut cursor starting on the first element of the list.
-    pub(crate) fn cursor_front_mut(&mut self) -> CursorMut<'_, G> {
+    pub fn cursor_front_mut(&mut self) -> CursorMut<'_, G> {
         CursorMut::new(self, self.front())
     }
 }
