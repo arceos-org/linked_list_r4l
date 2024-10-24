@@ -370,7 +370,7 @@ impl<'a, G: GetLinks> CursorMut<'a, G> {
         }
     }
 
-    pub(crate) fn current(&mut self) -> Option<&mut G::EntryType> {
+    pub fn current(&mut self) -> Option<&mut G::EntryType> {
         let cur = self.cursor.cur?;
         // SAFETY: Objects must be kept alive while on the list.
         Some(unsafe { &mut *cur.as_ptr() })
@@ -378,7 +378,7 @@ impl<'a, G: GetLinks> CursorMut<'a, G> {
 
     /// Removes the entry the cursor is pointing to and advances the cursor to the next entry. It
     /// returns a raw pointer to the removed element (if one is removed).
-    pub(crate) fn remove_current(&mut self) -> Option<NonNull<G::EntryType>> {
+    pub fn remove_current(&mut self) -> Option<NonNull<G::EntryType>> {
         let entry = self.cursor.cur?;
         self.cursor.move_next(self.list);
         // SAFETY: The entry is on the list as we just got it from there and it cannot change.
@@ -386,26 +386,26 @@ impl<'a, G: GetLinks> CursorMut<'a, G> {
         Some(entry)
     }
 
-    pub(crate) fn peek_next(&mut self) -> Option<&mut G::EntryType> {
+    pub fn peek_next(&mut self) -> Option<&mut G::EntryType> {
         let mut new = CommonCursor::new(self.cursor.cur);
         new.move_next(self.list);
         // SAFETY: Objects must be kept alive while on the list.
         Some(unsafe { &mut *new.cur?.as_ptr() })
     }
 
-    pub(crate) fn peek_prev(&mut self) -> Option<&mut G::EntryType> {
+    pub fn peek_prev(&mut self) -> Option<&mut G::EntryType> {
         let mut new = CommonCursor::new(self.cursor.cur);
         new.move_prev(self.list);
         // SAFETY: Objects must be kept alive while on the list.
         Some(unsafe { &mut *new.cur?.as_ptr() })
     }
 
-    pub(crate) fn move_next(&mut self) {
+    pub fn move_next(&mut self) {
         self.cursor.move_next(self.list);
     }
 
     #[allow(dead_code)]
-    pub(crate) fn move_prev(&mut self) {
+    pub fn move_prev(&mut self) {
         self.cursor.move_prev(self.list);
     }
 }
