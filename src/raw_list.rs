@@ -90,21 +90,21 @@ impl<T: ?Sized> ListEntry<T> {
 /// # Invariants
 ///
 /// The links of objects added to a list are owned by the list.
-pub(crate) struct RawList<G: GetLinks> {
+pub struct RawList<G: GetLinks> {
     head: Option<NonNull<G::EntryType>>,
 }
 
 impl<G: GetLinks> RawList<G> {
-    pub(crate) const fn new() -> Self {
+    pub const fn new() -> Self {
         Self { head: None }
     }
 
     /// Returns an iterator for the list starting at the first entry.
-    pub(crate) fn iter(&self) -> Iterator<'_, G> {
+    pub fn iter(&self) -> Iterator<'_, G> {
         Iterator::new(self.cursor_front(), self.cursor_back())
     }
 
-    pub(crate) const fn is_empty(&self) -> bool {
+    pub const fn is_empty(&self) -> bool {
         self.head.is_none()
     }
 
@@ -135,11 +135,7 @@ impl<G: GetLinks> RawList<G> {
     /// # Safety
     ///
     /// Callers must ensure that `existing` points to a valid entry that is on the list.
-    pub(crate) unsafe fn insert_after(
-        &mut self,
-        existing: &G::EntryType,
-        new: &G::EntryType,
-    ) -> bool {
+    pub unsafe fn insert_after(&mut self, existing: &G::EntryType, new: &G::EntryType) -> bool {
         let links = G::get_links(new);
         if !links.acquire_for_insertion() {
             // Nothing to do if already inserted.
@@ -180,11 +176,11 @@ impl<G: GetLinks> RawList<G> {
         true
     }
 
-    pub(crate) unsafe fn push_back(&mut self, new: &G::EntryType) -> bool {
+    pub unsafe fn push_back(&mut self, new: &G::EntryType) -> bool {
         self.push_back_internal(new, false)
     }
 
-    pub(crate) unsafe fn push_front(&mut self, new: &G::EntryType) -> bool {
+    pub unsafe fn push_front(&mut self, new: &G::EntryType) -> bool {
         self.push_back_internal(new, true)
     }
 
@@ -232,7 +228,7 @@ impl<G: GetLinks> RawList<G> {
     ///
     /// Callers must ensure that `data` is either on this list or in no list. It being on another
     /// list leads to memory unsafety.
-    pub(crate) unsafe fn remove(&mut self, data: &G::EntryType) -> bool {
+    pub unsafe fn remove(&mut self, data: &G::EntryType) -> bool {
         self.remove_internal(data)
     }
 
@@ -244,7 +240,7 @@ impl<G: GetLinks> RawList<G> {
     }
 
     /// Get and Remove the first element of the list.
-    pub(crate) fn pop_front(&mut self) -> Option<NonNull<G::EntryType>> {
+    pub fn pop_front(&mut self) -> Option<NonNull<G::EntryType>> {
         self.pop_front_internal()
     }
 
@@ -423,7 +419,7 @@ impl<'a, G: GetLinks> iter::IntoIterator for &'a RawList<G> {
 }
 
 /// An iterator for the linked list.
-pub(crate) struct Iterator<'a, G: GetLinks> {
+pub struct Iterator<'a, G: GetLinks> {
     cursor_front: Cursor<'a, G>,
     cursor_back: Cursor<'a, G>,
 }
