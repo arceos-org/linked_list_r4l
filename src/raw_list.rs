@@ -357,7 +357,7 @@ impl<'a, G: GetLinks> Cursor<'a, G> {
     }
 }
 
-pub(crate) struct CursorMut<'a, G: GetLinks> {
+pub struct CursorMut<'a, G: GetLinks> {
     cursor: CommonCursor<G>,
     list: &'a mut RawList<G>,
 }
