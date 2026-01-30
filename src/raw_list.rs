@@ -94,6 +94,12 @@ pub struct RawList<G: GetLinks> {
     head: Option<NonNull<G::EntryType>>,
 }
 
+impl<G: GetLinks> Default for RawList<G> {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl<G: GetLinks> RawList<G> {
     /// Constructs a new empty RawList.
     pub const fn new() -> Self {
@@ -187,8 +193,11 @@ impl<G: GetLinks> RawList<G> {
     /// Adds the given object to the end (back) of the list.
     ///
     /// Rawlist will save the reference as node ptr.
-    /// The caller must ensure the validity of the reference while it is on
-    /// the linked list.
+    ///
+    /// # Safety
+    ///
+    /// Callers must ensure that `new` points to a valid entry that is not already on any list.
+    /// The reference must remain valid while it is on the linked list.
     pub unsafe fn push_back(&mut self, new: NonNull<G::EntryType>) -> bool {
         self.push_back_internal(new, false)
     }
@@ -196,8 +205,11 @@ impl<G: GetLinks> RawList<G> {
     /// Adds the given object to the first (front) of the list.
     ///
     /// Rawlist will save the reference as node ptr.
-    /// The caller must ensure the validity of the reference while it is on
-    /// the linked list.
+    ///
+    /// # Safety
+    ///
+    /// Callers must ensure that `new` points to a valid entry that is not already on any list.
+    /// The reference must remain valid while it is on the linked list.
     pub unsafe fn push_front(&mut self, new: NonNull<G::EntryType>) -> bool {
         self.push_back_internal(new, true)
     }
